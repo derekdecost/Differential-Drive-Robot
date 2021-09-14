@@ -5,7 +5,7 @@ from std_msgs.msg import Float32
 
 class FibonacciListener:
     def __init__(self):
-        rospy.Subscriber('output1', Float32, self.callback)
+        rospy.Subscriber('input', Float32, self.callback)
 
     def callback(self, msg):
         rospy.loginfo(f"{rospy.get_caller_id()} published {msg.data}")
