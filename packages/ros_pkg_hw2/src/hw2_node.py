@@ -5,7 +5,15 @@ from std_msgs.msg import Float32
 
 class FibonacciTalker:
     def __init__(self):
-        self.pub = rospy.Publisher('input', Float32, queue_size=10)
+    	# Student note:
+    	# The topic must also specify the namespace in the case of communication 
+    	# between packages. In this case, we are sending data between the "hw2" 
+    	# nodes via the "mystery_node" in homework 1 and the namespace must
+    	# be specified as: 
+    	#               v The topic name I want to publish to
+    	# /mystery/<topic name>
+        #    ^ mystery_node namespace
+        self.pub = rospy.Publisher('/mystery/input', Float32, queue_size=10)
         
         # Initial Fibonacci values
         self.fib1 = 0
@@ -32,7 +40,7 @@ class FibonacciTalker:
 
         # Output the value to the terminal, write it to the logfile, and write
         # it to rosout
-        rospy.loginfo(input_val)
+        # rospy.loginfo(input_val)
 
         # Publish the fibonacci value to the topic 'input'
         self.pub.publish(input_val)
