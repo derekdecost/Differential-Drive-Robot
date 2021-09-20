@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find mystery_package)/launch/launch_mystery.launch"/>
+  <group ns="homework_3">
+    <node pkg="ros_pkg_hw2" name="hw2_node" type="hw2_node.py"/>
+    <node pkg="ros_pkg_hw2" name="hw3_node" type="hw3_node.py"/>
+  </group>
+</launch>
