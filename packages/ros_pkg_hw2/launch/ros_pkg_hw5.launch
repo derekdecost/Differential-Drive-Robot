@@ -1,0 +1,6 @@
+<launch>
+  <group ns="homework_5">
+    <node pkg="ros_pkg_hw2" name="sensor" type="hw5_sensor.py"/>
+    <node pkg="ros_pkg_hw2" name="coordinate_transformer" type="hw5_frame_transformer.py"/>
+  </group>
+</launch>
