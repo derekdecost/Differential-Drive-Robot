@@ -1,1 +1,1 @@
-dts devel run -M -X --cmd bash
+dts devel run -M -X --force --cmd bash
