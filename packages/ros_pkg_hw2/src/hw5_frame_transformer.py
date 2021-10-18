@@ -7,7 +7,7 @@
 
 import rospy
 import numpy as np
-from   geometry_msgs.msg import Point
+from   geometry_msgs.msg import Vector3
 
 class ReferenceFrameTransformer:
     def __init__(self, input_topic, output_topic, input_type, output_type, queue_val):
@@ -22,8 +22,8 @@ class ReferenceFrameTransformer:
         #                                    [-0.707,  0.707, 5.586],
         #                                    [ 0,      0,     1]])
         self.T_sensor_to_world = np.matrix('0.707 0.707 3.414; -0.707 0.707 5.586; 0 0 1')
-        self.P_sensor_to_robot = Point()
-        self.P_sensor_to_world = Point()
+        self.P_sensor_to_robot = Vector3()
+        self.P_sensor_to_world = Vector3()
 
         # Subscriber that listens for input points from the sensor
         rospy.Subscriber(input_topic, input_type, self.callback)
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     rospy.init_node('hw5_transformer', anonymous=True)
     ReferenceFrameTransformer(input_topic='/hw5/sensor_points',
                               output_topic=['/hw5/s2r', '/hw5/s2w'],
-                              input_type=Point,
-                              output_type=Point,
+                              input_type=Vector3,
+                              output_type=Vector3,
                               queue_val=10)
     rospy.spin()
