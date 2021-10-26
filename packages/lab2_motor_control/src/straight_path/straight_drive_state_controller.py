@@ -1,5 +1,5 @@
 import rospy
-import circular_path_params
+import straight_path_params
 
 from std_msgs.msg import Float32
 from std_msgs.msg import Bool
@@ -30,7 +30,7 @@ class DriveStateController:
 
 if __name__ == "__main__":
     try:
-        rospy.init_node('lab2_drive_state_controller', anonymous=True)
+        rospy.init_node('drive_state_controller', anonymous=True)
         drive_state_controller = DriveStateController(
             input_topic=["/lab2/right_wheel_rotations", "/lab2/left_wheel_rotations"],
             output_topic="/lab2/drive_state",
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
         rate = rospy.Rate(0.5)
         while not rospy.is_shutdown():
-            if (drive_state_controller.r_wheel_rotations >= circular_path_params.WHEEL_ROTATIONS_TO_COMPLETE_RIGHT_PATH) and (drive_state_controller.l_wheel_rotations >= circular_path_params.WHEEL_ROTATIONS_TO_COMPLETE_LEFT_PATH):
+            if (drive_state_controller.r_wheel_rotations >= straight_path_params.WHEEL_ROTATIONS_TO_COMPLETE_RIGHT_PATH) and (drive_state_controller.l_wheel_rotations >= straight_path_params.WHEEL_ROTATIONS_TO_COMPLETE_LEFT_PATH):
                 drive_state_controller.drive_state.data = False
                 drive_state_controller.drive_state_pub.publish(drive_state_controller.drive_state)
 

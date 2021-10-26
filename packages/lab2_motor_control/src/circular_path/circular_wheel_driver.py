@@ -27,17 +27,18 @@ class WheelDriver:
         return
 
 if __name__ == "__main__":
-    robot_speed = 1 # m/s (Assumed)
-    wheel_driver = WheelDriver("/lab2/drive_state",
-                               "/beezchurger/wheels_driver_node/wheels_cmd_executed",
-                               Bool,
-                               WheelCmd,
-                               10)
-    print("Waiting for all nodes to start...")
-    time.sleep(5)
-    print("Starting motors.")
+    try:
+        rospy.init_node('circular_wheel_driver', anonymous=True)
+        robot_speed = 1 # m/s (Assumed)
+        wheel_driver = WheelDriver("/lab2/drive_state",
+                                "/beezchurger/wheels_driver_node/wheels_cmd_executed",
+                                Bool,
+                                WheelCmd,
+                                10)
 
-    wheel_driver.wheel_cmd.vel_right = robot_params.VELOCITY_RATIO_RIGHT * robot_speed
-    wheel_driver.wheel_cmd.vel_left  = robot_params.VELOCITY_RATIO_LEFT  * robot_speed
-    wheel_driver.wheel_velocity_pub(wheel_driver.wheel_cmd)
-    rospy.spin()
+        wheel_driver.wheel_cmd.vel_right = robot_params.VELOCITY_RATIO_RIGHT * robot_speed
+        wheel_driver.wheel_cmd.vel_left  = robot_params.VELOCITY_RATIO_LEFT  * robot_speed
+        wheel_driver.wheel_velocity_pub(wheel_driver.wheel_cmd)
+        rospy.spin()
+    except rospy.ROSInterruptException:
+        pass
