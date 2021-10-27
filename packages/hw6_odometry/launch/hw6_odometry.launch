@@ -1,0 +1,6 @@
+<launch>
+    <include file="$(find odometry_hw)/launch/odom_hw.launch"/>
+    <group ns="hw6">
+        <node pkg="hw6_odometry" name="hw6_pose_calculator" type="pose_calculator.py"/>
+    </group>
+</launch>

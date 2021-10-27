@@ -9,7 +9,7 @@ from duckietown_msgs.msg import WheelCmd
 
 class WheelDriver:
     def __init__(self, input_topic, output_topic, input_type, output_type, queue_val):
-        rospy.Subscriber(input_topic, input_type, self.right_wheel_callback)
+        rospy.Subscriber(input_topic, input_type, self.drive_state_callback)
         self.wheel_velocity_pub = rospy.Publisher(output_topic, output_type, queue_size=queue_val)
         self.wheel_cmd = WheelCmd()
         self.wheel_cmd.vel_right = 0
