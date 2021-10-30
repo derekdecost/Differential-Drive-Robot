@@ -1,6 +1,0 @@
-<launch>
-  <node pkg="lab2_motor_control" name="left_wheel_rotation_counter" type="$(find straight_path)/left_wheel_rotation_counter.py"/>
-  <node pkg="lab2_motor_control" name="right_wheel_rotation_counter" type="$(find straight_path)/right_wheel_rotation_counter.py"/>
-  <node pkg="lab2_motor_control" name="straight_drive_state_controller" type="$(find straight_path)/straight_drive_state_controller.py"/>
-  <node pkg="lab2_motor_control" name="straight_wheel_driver" type="$(find straight_path)/straight_wheel_driver.py"/>
-</launch>
