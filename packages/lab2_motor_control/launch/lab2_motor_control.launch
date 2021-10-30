@@ -1,0 +1,3 @@
+<launch>
+    <include file="$(find hw6_odometry)/launch/lab2_odometry.launch"/>
+</launch>

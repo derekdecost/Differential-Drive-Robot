@@ -1,14 +1,6 @@
 <launch>
-  <group ns="rotation_counters">
-    <node pkg="lab2_motor_control" name="left_wheel_rotation_counter" type="straight_path/left_wheel_rotation_counter.py"/>
-    <node pkg="lab2_motor_control" name="right_wheel_rotation_counter" type="straight_path/right_wheel_rotation_counter.py"/>
-  </group>
-
-  <group ns="straight_drive_state_controller">
-    <node pkg="lab2_motor_control" name="straight_drive_state_controller" type="straight_path/straight_drive_state_controller.py"/>
-  </group>
-
-  <group ns="straight_wheel_driver">
-    <node pkg="lab2_motor_control" name="straight_wheel_driver" type="straight_path/straight_wheel_driver.py"/>
-  </group>
+  <node pkg="lab2_motor_control" name="left_wheel_rotation_counter" type="$(find straight_path)/left_wheel_rotation_counter.py"/>
+  <node pkg="lab2_motor_control" name="right_wheel_rotation_counter" type="$(find straight_path)/right_wheel_rotation_counter.py"/>
+  <node pkg="lab2_motor_control" name="straight_drive_state_controller" type="$(find straight_path)/straight_drive_state_controller.py"/>
+  <node pkg="lab2_motor_control" name="straight_wheel_driver" type="$(find straight_path)/straight_wheel_driver.py"/>
 </launch>

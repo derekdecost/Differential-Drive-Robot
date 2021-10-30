@@ -1,0 +1,23 @@
+<!--
+    Launch file for part 2 of Lab2.
+    Launches the wheel distance calculator node developed in Lab2 and sends
+    the output to the pose calculator node developed in HW6.
+-->
+
+<launch>
+    <!--
+        Launch the wheel delta calculator created in Lab2
+    -->
+    <group ns="lab2">
+        <node pkg="hw6_odometry" name="wheel_distance_calculator" type="wheel_distance_calculator.py"/>
+    </group>
+
+    <!--
+        Launch the pose calculating node from HW6 and remap the input to the output of the
+        wheel delta calculator developed in Lab2 
+    -->
+    <group ns="hw6">
+        <remap from="/dist_wheel" to="/lab2/wheel_distance_delta"/>
+        <node pkg="hw6_odometry" name="hw6_pose_calculator" type="pose_calculator.py"/>
+    </group >
+</launch>

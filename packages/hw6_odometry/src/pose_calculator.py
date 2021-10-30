@@ -50,6 +50,7 @@ class PoseCalculator:
 
         # Publish the pose message to the output topic
         self.pose_pub.publish(self.pose)
+        rospy.loginfo(f"Pose = x:{self.pose.x}, y:{self.pose.y}, theta:{self.pose.theta}")
 
         return
 
