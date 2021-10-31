@@ -3,6 +3,7 @@
 import rospy
 import numpy as np
 
+from lib.fsm_state_controller import StateController
 from odometry_hw.msg import DistWheel
 from odometry_hw.msg import Pose2D
 
@@ -55,6 +56,7 @@ class PoseCalculator:
         return
 
 if __name__ == "__main__":
+    duckiebot_sc = StateController(parent="pose_calculator")
     rospy.init_node("hw6_pose_calculator", anonymous=True)
     PoseCalculator(
         input_topic='/dist_wheel',

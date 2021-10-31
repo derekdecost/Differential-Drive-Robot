@@ -3,8 +3,9 @@
 import rospy
 import math
 
-from duckietown_msgs.msg import WheelEncoderStamped
-from odometry_hw.msg import DistWheel
+from lib.fsm_state_controller import StateController
+from duckietown_msgs.msg      import WheelEncoderStamped
+from odometry_hw.msg          import DistWheel
 
 # Calculate wheel measurements used to calculate the distance travelled based on the number of ticks incremented
 WHEEL_DIAMETER      = 0.065
@@ -14,7 +15,7 @@ class WheelDistanceCalculator:
     def __init__(self):
         rospy.Subscriber("/beezchurger/left_wheel_encoder_node/tick", WheelEncoderStamped, self.__cb_left_wheel)
         rospy.Subscriber("/beezchurger/right_wheel_encoder_node/tick", WheelEncoderStamped, self.__cb_right_wheel)
-        self.pub        = rospy.Publisher("/lab2/wheel_distance_delta", DistWheel, queue_size=10)
+        self.pub = rospy.Publisher("/lab2/wheel_distance_delta", DistWheel, queue_size=10)
         
         self.l_ticks  = 0
         self.r_ticks  = 0
@@ -54,6 +55,7 @@ class WheelDistanceCalculator:
 
 if __name__ == "__main__":
     try:
+        duckiebot_sc = StateController(parent="wheel_distance_calculator")
         rospy.init_node('wheel_distance_calculator', anonymous=True)
         
         l_wes = WheelEncoderStamped()
