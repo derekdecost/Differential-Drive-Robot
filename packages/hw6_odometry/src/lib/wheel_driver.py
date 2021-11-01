@@ -2,21 +2,26 @@
 
 import rospy
 
-from duckietown_msgs.msg import WheelCmd
+from duckietown_msgs.msg import WheelsCmdStamped
 from odometry_hw.msg     import DistWheel
 
 WHEEL_CMD_TOPIC = "/beezchurger/wheels_driver_node/wheels_cmd_executed"
-WHEEL_CMD_TYPE  = WheelCmd
+WHEEL_CMD_TYPE  = WheelsCmdStamped
 
 ROBOT_AXLE_LENGTH = 0.1
 
 class WheelDriver:
-    def __init__(self, pause_rate=0.5):
+    def __init__(self, parent, pause_rate=0.5):
+        # rospy.init_node(f"wheel_driver_{parent}", anonymous=True)
         rospy.Subscriber("/lab2/wheel_distance_delta", DistWheel, self.__cb_update_distance_traveled)
         self.wheel_velocity_pub = rospy.Publisher(WHEEL_CMD_TOPIC, WHEEL_CMD_TYPE, queue_size=10)
         
         # Create the velocity setting message and the initial values
-        self.wheel_velocity            = WheelCmd()
+        self.wheel_velocity            = WheelsCmdStamped()
+        self.wheel_velocity.header.seq = 1800
+        self.wheel_velocity.header.stamp.secs = 0
+        self.wheel_velocity.header.stamp.nsecs = 0
+        self.wheel_velocity.frame_id = ''
         self.wheel_velocity.vel_left   = 0
         self.wheel_velocity.vel_right  = 0
         self.l_wheel_distance_traveled = 0

@@ -3,7 +3,7 @@
 import rospy
 import math
 
-from lib.fsm_state_controller import StateController
+# from lib.fsm_state_controller import StateController
 from duckietown_msgs.msg      import WheelEncoderStamped
 from odometry_hw.msg          import DistWheel
 
@@ -55,7 +55,7 @@ class WheelDistanceCalculator:
 
 if __name__ == "__main__":
     try:
-        duckiebot_sc = StateController(parent="wheel_distance_calculator")
+        # duckiebot_sc = StateController("wheel_distance_calculator")
         rospy.init_node('wheel_distance_calculator', anonymous=True)
         
         l_wes = WheelEncoderStamped()

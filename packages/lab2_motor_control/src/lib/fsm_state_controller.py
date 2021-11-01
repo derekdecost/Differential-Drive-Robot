@@ -6,7 +6,8 @@ import sys
 from std_msgs.msg import Int16
 
 class StateController:
-    def __init__(self, parent=None):
+    def __init__(self, parent):
+        rospy.init_node(f"fsm_{parent}", anonymous=True)
         rospy.Subscriber("/fsm_state", Int16, self.__cb_state_actions)
         self.state_controller_pub = rospy.Publisher("/fsm_state", Int16, queue_size=10)
         self.state = Int16()
