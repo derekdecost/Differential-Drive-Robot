@@ -2,7 +2,6 @@
 
 import rospy
 import math
-import time
 import sys
 
 from lib.wheel_driver         import WheelDriver
@@ -46,33 +45,32 @@ if __name__ == "__main__":
         print("Driving in 1m line.")
         # Drive straight for 1m at 0.25m/s then exit.
         while not rospy.is_shutdown():
-            duckiebot_wd.drive(0.15, l_distance=1, r_distance=1)
-            # duckiebot_sc.kill_all_nodes()
+            duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
 
     elif path_type == "Square":
         print("Driving in 1m square")
         # Drive in a 1m square, then kill all nodes.
         while not rospy.is_shutdown():
             # Drive straight for 1m at 0.25m/s.
-            duckiebot_wd.drive(0.15, l_distance=1, r_distance=1)
+            duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
 
             # Turn in place 90 degrees CCW.
             duckiebot_wd.turn_in_place_ccw(0.05, angle=(math.pi / 2))
 
             # Drive straight for 1m at 0.25m/s.
-            duckiebot_wd.drive(0.15, l_distance=1, r_distance=1)
+            duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
 
             # Turn in place 90 degrees CCW.
             duckiebot_wd.turn_in_place_ccw(0.05, angle=(math.pi / 2))
 
             # Drive straight for 1m at 0.25m/s.
-            duckiebot_wd.drive(0.15, l_distance=1, r_distance=1)
+            duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
 
             # Turn in place 90 degrees CCW
             duckiebot_wd.turn_in_place_ccw(0.05, angle=(math.pi / 2))
 
             # Drive straight for 1m at 0.25m/s.
-            duckiebot_wd.drive(0.15, l_distance=1, r_distance=1)
+            duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
 
             # Turn in place 90 degrees CCW.
             duckiebot_wd.turn_in_place_ccw(0.05, angle=(math.pi / 2))
@@ -87,7 +85,6 @@ if __name__ == "__main__":
         print("Driving in 1m diameter circle")
         while not rospy.is_shutdown():
             # Drive in a 1m diameter circle at 0.25m/s then kill all nodes.
-            duckiebot_wd.drive(0.15, l_ratio=VELOCITY_RATIO_LEFT, r_ratio=VELOCITY_RATIO_RIGHT, l_distance=PATH_LEFT_LENGTH, r_distance=PATH_RIGHT_LENGTH)
-            # duckiebot_sc.kill_all_nodes()
+            duckiebot_wd.drive(0.15, (math.pi / 2), 0.5, l_distance=PATH_LEFT_LENGTH, r_distance=PATH_RIGHT_LENGTH)
 
 
