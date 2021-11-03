@@ -1,0 +1,22 @@
+<launch>
+    <!--
+        Launch the nodes that update the distance travelled and calculate the pose
+        of the duckiebot.
+    -->
+    <include file="$(find hw6_odometry)/launch/lab2_odometry.launch"/>
+    
+    <!--
+        Valid Parameters:
+            Line:   Sets the state machine to run the 1m line path pattern.
+            Square: Sets the state machine to run the 1m square path pattern.
+            Circle: Sets the state machine to run the 1m diameter circle path pattern.
+    -->
+    <param name="/lab2/path_type" type="string" value="TIP Test"/>
+
+    <!--
+        Launch the fsm used for controlling the pattern that the duckiebot will drive.
+    -->
+    <group ns="lab2">
+        <node pkg="lab2_motor_control" name="fsm_path_driver" type="fsm_path_driver.py"/>
+    </group>
+</launch>

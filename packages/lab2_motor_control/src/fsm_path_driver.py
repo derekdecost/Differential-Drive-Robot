@@ -4,6 +4,7 @@ import rospy
 import math
 import sys
 
+from std_msgs.msg import Bool
 from lib.wheel_driver    import WheelDriver
 from duckietown_msgs.msg import FSMState
 # from lib.fsm_state_controller import StateController
@@ -32,6 +33,7 @@ VELOCITY_RATIO_RIGHT     = ROBOT_RIGHT_WHEEL_RADIUS / ROBOT_CENTER_RADIUS
 class DuckiebotFSM:
     def __init__(self):
         rospy.Subscriber("/beezchurger/fsm_node/mode", FSMState, self.__cb_duckiebot_fsm)
+        rospy.Subscriber("/lab2/wdc_ready", Bool, self.__cb_wdc_ready)
         self.fsm_pub            = rospy.Publisher("/beezchurger/fsm_node/mode", FSMState, queue_size=10)
         self.duckiebot_fsmstate = FSMState()
         self.duckiebot_fsmstate.header.seq         = 0
@@ -40,7 +42,7 @@ class DuckiebotFSM:
         self.duckiebot_fsmstate.header.frame_id    = ""
         self.duckiebot_fsmstate.state = self.duckiebot_fsmstate.LANE_FOLLOWING
         self.duckiebot_current_state  = self.duckiebot_fsmstate.NORMAL_JOYSTICK_CONTROL
-        self.fsm_pub.publish(self.duckiebot_fsmstate)
+        self.wdc_ready = False
 
     def publish_state(self, state):
         self.duckiebot_fsmstate.state = state
@@ -49,6 +51,10 @@ class DuckiebotFSM:
 
     def __cb_duckiebot_fsm(self, msg):
         self.duckiebot_current_state = msg.state
+        return
+
+    def __cb_wdc_ready(self, msg):
+        self.wdc_ready = msg.data
         return
 
 if __name__ == "__main__":
@@ -60,7 +66,8 @@ if __name__ == "__main__":
     else:
         path_type = rospy.get_param("/lab2/path_type")
     
-    rate = rospy.Rate(1)
+    poll_rate = rospy.Rate(2)
+    rate      = rospy.Rate(0.5)
     duckiebot_fsm = DuckiebotFSM()
     duckiebot_wd  = WheelDriver()
     rospy.on_shutdown(duckiebot_wd.stop)
@@ -68,8 +75,10 @@ if __name__ == "__main__":
     while duckiebot_fsm.duckiebot_current_state != duckiebot_fsm.duckiebot_fsmstate.LANE_FOLLOWING:
         # Publish the lane following state every second until it changes.
         duckiebot_fsm.publish_state(duckiebot_fsm.duckiebot_fsmstate.LANE_FOLLOWING)
-        rate.sleep()
-        continue
+        poll_rate.sleep()
+
+    while duckiebot_fsm.wdc_ready == False:
+        poll_rate.sleep()
 
     if path_type == "Line":
         print("Driving in 1m line.")
@@ -81,37 +90,50 @@ if __name__ == "__main__":
         print("Driving in 1m square")
 
         # Drive straight for 1m at 0.25m/s.
-        duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
-
+        duckiebot_wd.drive(0.25, 0, 1, l_distance=0.8, r_distance=0.8)
+        # rate.sleep()
         # Turn in place 90 degrees CCW.
-        duckiebot_wd.turn_in_place(speed=4.0, angle=(math.pi / 2))
-
+        duckiebot_wd.turn_in_place(speed=6.0, angle=(math.pi / 2))
+        # rate.sleep()
         # Drive straight for 1m at 0.25m/s.
-        duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
-
+        duckiebot_wd.drive(0.25, 0, 1, l_distance=0.8, r_distance=0.8)
+        # rate.sleep()
         # Turn in place 90 degrees CCW.
-        duckiebot_wd.turn_in_place(speed=4.0, angle=(math.pi / 2))
-
+        duckiebot_wd.turn_in_place(speed=6.0, angle=(math.pi / 2))
+        # rate.sleep()
         # Drive straight for 1m at 0.25m/s.
-        duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
-
+        duckiebot_wd.drive(0.25, 0, 1, l_distance=0.8, r_distance=0.8)
+        # rate.sleep()
         # Turn in place 90 degrees CCW
-        duckiebot_wd.turn_in_place(speed=4.0, angle=(math.pi / 2))
-
+        duckiebot_wd.turn_in_place(speed=6.0, angle=(math.pi / 2))
+        # rate.sleep()
         # Drive straight for 1m at 0.25m/s.
-        duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
-
+        duckiebot_wd.drive(0.25, 0, 1, l_distance=0.8, r_distance=0.8)
+        # rate.sleep()
         # Turn in place 90 degrees CCW.
-        duckiebot_wd.turn_in_place(speed=4.0, angle=(math.pi / 2))
-
+        duckiebot_wd.turn_in_place(speed=6.0, angle=(math.pi / 2))
+        # rate.sleep()
         # Stop the duckiebot. The duckiebot should be in its starting position and angle.
         duckiebot_wd.stop()
         sys.exit()
             
-
     elif path_type == "Circle":
         print("Driving in 1m diameter circle")
 
-        duckiebot_wd.drive(0.15, (math.pi / 2), 0.5, l_distance=PATH_LEFT_LENGTH, r_distance=PATH_RIGHT_LENGTH)
+        duckiebot_wd.drive(0.3, (math.pi / 2), 0.5, l_distance=PATH_LEFT_LENGTH, r_distance=PATH_RIGHT_LENGTH)
         sys.exit()
+
+    elif path_type == "TIP Test":
+        print("Running Turn-In-Place Test")
+
+        # duckiebot_wd.drive(0.1, 0, 1)
+        # rate.sleep()
+        # duckiebot_wd.stop()
+        duckiebot_wd.turn_in_place(speed=5, angle=(math.pi / 2))
+        # duckiebot_wd.drive(0, 0, 0, omega=(math.pi / 2))
+        while not rospy.is_shutdown():
+            pass
+        # rate.sleep()
+        # duckiebot_wd.stop()
+        sys.exit
 
