@@ -11,8 +11,8 @@ from duckietown_msgs.msg import FSMState
 
 # All values are in meters unless specified otherwise.
 # Physical dimensions of the robot.
-AXLE_LENGTH              = 0.1
-WHEEL_LENGTH_FROM_CENTER = 0.05
+AXLE_LENGTH              = 0.07
+WHEEL_LENGTH_FROM_CENTER = 0.035
 
 # Circular path dimensions.
 PATH_DIAMETER            = 1   
@@ -23,8 +23,8 @@ ROBOT_LEFT_WHEEL_RADIUS  = ROBOT_CENTER_RADIUS - WHEEL_LENGTH_FROM_CENTER
 ROBOT_RIGHT_WHEEL_RADIUS = ROBOT_CENTER_RADIUS + WHEEL_LENGTH_FROM_CENTER
 
 PATH_CENTER_LENGTH       = PATH_DIAMETER * math.pi 
-PATH_LEFT_LENGTH         = ROBOT_LEFT_WHEEL_RADIUS  * 2 * math.pi
-PATH_RIGHT_LENGTH        = ROBOT_RIGHT_WHEEL_RADIUS * 2 * math.pi
+PATH_LEFT_LENGTH         = ROBOT_LEFT_WHEEL_RADIUS  * 1.2 * math.pi
+PATH_RIGHT_LENGTH        = ROBOT_RIGHT_WHEEL_RADIUS * 1.2 * math.pi
 
 # Velocity ratios.
 VELOCITY_RATIO_LEFT      = ROBOT_LEFT_WHEEL_RADIUS  / ROBOT_CENTER_RADIUS
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         path_type = rospy.get_param("/lab2/path_type")
     
     poll_rate = rospy.Rate(2)
-    rate      = rospy.Rate(0.5)
+    rate      = rospy.Rate(1)
     duckiebot_fsm = DuckiebotFSM()
     duckiebot_wd  = WheelDriver()
     rospy.on_shutdown(duckiebot_wd.stop)
@@ -83,36 +83,36 @@ if __name__ == "__main__":
     if path_type == "Line":
         print("Driving in 1m line.")
         
-        duckiebot_wd.drive(0.15, 0, 1, l_distance=1, r_distance=1)
+        duckiebot_wd.drive(0.2, 0, 1, l_distance=0.8, r_distance=0.8)
         sys.exit()
 
     elif path_type == "Square":
         print("Driving in 1m square")
 
         # Drive straight for 1m at 0.25m/s.
-        duckiebot_wd.drive(0.25, 0, 1, l_distance=0.8, r_distance=0.8)
+        duckiebot_wd.drive(0.3, 0, 1, l_distance=0.7, r_distance=0.9)
+        rate.sleep()
+        # Turn in place 90 degrees CCW.
+        duckiebot_wd.turn_in_place(speed=6, angle=(math.pi / 2))
+        rate.sleep()
+        # Drive straight for 1m at 0.25m/s.
+        duckiebot_wd.drive(0.3, 0, 1, l_distance=0.7, r_distance=0.9)
         # rate.sleep()
         # Turn in place 90 degrees CCW.
-        duckiebot_wd.turn_in_place(speed=6.0, angle=(math.pi / 2))
-        # rate.sleep()
+        duckiebot_wd.turn_in_place(speed=6, angle=(math.pi / 2))
+        rate.sleep()
         # Drive straight for 1m at 0.25m/s.
-        duckiebot_wd.drive(0.25, 0, 1, l_distance=0.8, r_distance=0.8)
-        # rate.sleep()
-        # Turn in place 90 degrees CCW.
-        duckiebot_wd.turn_in_place(speed=6.0, angle=(math.pi / 2))
-        # rate.sleep()
-        # Drive straight for 1m at 0.25m/s.
-        duckiebot_wd.drive(0.25, 0, 1, l_distance=0.8, r_distance=0.8)
-        # rate.sleep()
+        duckiebot_wd.drive(0.3, 0, 1, l_distance=0.7, r_distance=0.9)
+        rate.sleep()
         # Turn in place 90 degrees CCW
-        duckiebot_wd.turn_in_place(speed=6.0, angle=(math.pi / 2))
-        # rate.sleep()
+        duckiebot_wd.turn_in_place(speed=6, angle=(math.pi / 2))
+        rate.sleep()
         # Drive straight for 1m at 0.25m/s.
-        duckiebot_wd.drive(0.25, 0, 1, l_distance=0.8, r_distance=0.8)
-        # rate.sleep()
+        duckiebot_wd.drive(0.3, 0, 1, l_distance=0.7, r_distance=0.9)
+        rate.sleep()
         # Turn in place 90 degrees CCW.
-        duckiebot_wd.turn_in_place(speed=6.0, angle=(math.pi / 2))
-        # rate.sleep()
+        duckiebot_wd.turn_in_place(speed=6, angle=(math.pi / 2))
+        rate.sleep()
         # Stop the duckiebot. The duckiebot should be in its starting position and angle.
         duckiebot_wd.stop()
         sys.exit()
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     elif path_type == "Circle":
         print("Driving in 1m diameter circle")
 
-        duckiebot_wd.drive(0.3, (math.pi / 2), 0.5, l_distance=PATH_LEFT_LENGTH, r_distance=PATH_RIGHT_LENGTH)
+        duckiebot_wd.drive(0.3, (math.pi / 2), 2, l_distance=PATH_LEFT_LENGTH, r_distance=PATH_RIGHT_LENGTH, omega=2.5)
         sys.exit()
 
     elif path_type == "TIP Test":

@@ -20,7 +20,7 @@ class PoseCalculator:
         self.pose = output_type()
 
         # Class parameters
-        self.axle_length_m      = 0.1
+        self.axle_length_m      = 0.07
         self.half_axle_length_m = self.axle_length_m / 2
 
         # Pose information
