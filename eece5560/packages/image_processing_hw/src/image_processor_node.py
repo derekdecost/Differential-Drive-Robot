@@ -35,8 +35,10 @@ class ImageProcessor:
         filtered_img  = cv2.inRange(cv_img, (0, 0, 200), (180, 50, 255))
         filtered_img  = cv2.erode(filtered_img,  erode_kernel)
         filtered_img  = cv2.dilate(filtered_img, dilate_kernel)
-
-        ros_img       = self.bridge.cv2_to_imgmsg(filtered_img, "passthrough")
+        filtered_img  = cv2.bitwise_and(cv_img, cv_img, mask=filtered_img)
+        filtered_img  = cv2.cvtColor(filtered_img, cv2.COLOR_HSV2BGR)
+        
+        ros_img       = self.bridge.cv2_to_imgmsg(filtered_img, "bgr8")
         self.white_img_pub.publish(ros_img)
 
     def __cb_filter_yellow(self, msg):
@@ -47,8 +49,10 @@ class ImageProcessor:
         filtered_img  = cv2.inRange(cv_img, (24, 155, 210), (32, 255, 255))
         filtered_img  = cv2.erode(filtered_img,  erode_kernel)
         filtered_img  = cv2.dilate(filtered_img, dilate_kernel)
+        filtered_img  = cv2.bitwise_and(cv_img, cv_img, mask=filtered_img)
+        filtered_img  = cv2.cvtColor(filtered_img, cv2.COLOR_HSV2BGR)
         
-        ros_img       = self.bridge.cv2_to_imgmsg(filtered_img, "passthrough")
+        ros_img       = self.bridge.cv2_to_imgmsg(filtered_img, "bgr8")
         self.yellow_img_pub.publish(ros_img)
 
 
