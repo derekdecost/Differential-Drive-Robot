@@ -1,0 +1,3 @@
+<launch>
+    <node name="image_processor" pkg="image_processing_hw" type="image_processor_node.py"/>
+</launch>

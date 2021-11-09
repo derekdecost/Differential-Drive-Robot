@@ -15,8 +15,6 @@ WHEEL_CIRCUMFERANCE = WHEEL_DIAMETER * math.pi
 
 class WheelDistanceCalculator:
     def __init__(self, poll_rate=2):
-        rospy.Subscriber("/beezchurger/left_wheel_encoder_node/tick", WheelEncoderStamped, self.__cb_left_wheel)
-        rospy.Subscriber("/beezchurger/right_wheel_encoder_node/tick", WheelEncoderStamped, self.__cb_right_wheel)
         rospy.Subscriber("/lab2/wdc_ready", Bool, self.__cb_check_ready_state)
         self.pub       = rospy.Publisher("/lab2/wheel_distance_delta", DistWheel, queue_size=10)
         self.ready_pub = rospy.Publisher("/lab2/wdc_ready", Bool, queue_size=10)
@@ -30,6 +28,8 @@ class WheelDistanceCalculator:
         self.l_tick_initial_state = False
         self.r_tick_initial_state = False
         self.poll_rate = Rate(poll_rate)
+        rospy.Subscriber("/beezchurger/left_wheel_encoder_node/tick", WheelEncoderStamped, self.__cb_left_wheel)
+        rospy.Subscriber("/beezchurger/right_wheel_encoder_node/tick", WheelEncoderStamped, self.__cb_right_wheel)
 
     def set_state(self, state):
         self.ready_message.data = state
