@@ -20,6 +20,16 @@ class ImageProcessor:
         rospy.Subscriber("image_cropped", Image, self.__cb_filter_white)
         rospy.Subscriber("image_cropped", Image, self.__cb_filter_yellow)
 
+    """
+        @fn     __cb_cropper
+        @brief  This function takes an input image from the duckiebot and crops the top 55%
+                of the image to remove image noise such as objects in the background that 
+                could interfere with the yellow and white filters to detect the road lanes.
+
+        @param  msg - Image received from the camera.
+
+        @return None.
+    """
     def __cb_cropper(self, msg):
         cv_img  = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         cv_img  = cv_img[int(cv_img.shape[0] - (cv_img.shape[0] * self.__image_percentage)):cv_img.shape[0], 0:cv_img.shape[1]]
