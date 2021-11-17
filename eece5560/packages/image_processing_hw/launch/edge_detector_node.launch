@@ -1,0 +1,6 @@
+<launch>
+    <arg name="index" default="0" doc="Index of image to publish"/>
+    <node name="image_pub" pkg="image_processing_hw" type="image_pub.py" args="$(find image_processing_hw)/sample_images/image$(arg index).png" />
+    <node name="image_processor" pkg="image_processing_hw" type="image_processor_node.py"/>
+    <node name="edge_detector_node" pkg="image_processing_hw" type="edge_detector_node.py"/>
+</launch>

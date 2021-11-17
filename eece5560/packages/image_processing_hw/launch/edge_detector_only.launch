@@ -1,0 +1,4 @@
+<launch>
+    <node name="image_processor" pkg="image_processing_hw" type="image_processor_node.py"/>
+    <node name="edge_detector_node" pkg="image_processing_hw" type="edge_detector_node.py"/>
+</launch>
