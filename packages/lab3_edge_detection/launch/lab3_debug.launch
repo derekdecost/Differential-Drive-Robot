@@ -1,0 +1,8 @@
+<launch>
+    <!--
+        Launch the lane detector node code developed in part 1 of lab 3.
+    -->
+    <group ns="lab3">
+        <node pkg="lab3_edge_detection" name="lab3_lane_detector_node" type="lane_detector_node.py"/>
+    </group>
+</launch>
