@@ -1,0 +1,13 @@
+<launch>
+    <param name="controller_ready" type="string" value="false"/>
+
+    <!--
+        Launch the nodes in the controls_hw package that will be used to communicate with the controller.
+    -->
+    <include file="$(find controls_hw)/launch/start_dynamics.launch"/>
+
+    <!--
+        Launch controller nodes in the pid_controller package.
+    -->
+    <node pkg="pid_controller" name="pid_controller_node" type="pid_controller_node.py"/>
+</launch>
