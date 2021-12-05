@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+from logging import raiseExceptions
 import rospy
 import actionlib
-import hw10.msg
-from hw10.srv import *
+import example_action_server.msg
+from example_service.srv import *
 
 def fib_srv(fib_cnt):
     rospy.wait_for_service("calc_fibonacci")
@@ -21,9 +22,9 @@ def fib_srv(fib_cnt):
     return fib_recv
 
 def fib_action(fib_cnt):
-    client = actionlib.SimpleActionClient("fibonacci", hw10.msg.FibonacciAction)
+    client = actionlib.SimpleActionClient("fibonacci", example_action_server.msg.FibonacciAction)
     client.wait_for_server()
-    goal = hw10.msg.FibonacciGoal(order=fib_cnt)
+    goal = example_action_server.msg.FibonacciGoal(order=fib_cnt)
 
     rospy.loginfo("fib_action: Requesting service...")
     client.send_goal(goal)
@@ -35,6 +36,11 @@ def fib_action(fib_cnt):
 
 if __name__ == "__main__":
     rospy.init_node("hw10_client_node", anonymous=True)
+
+    # Wait 5 seconds to allow all nodes and services time to start.
+    rate = rospy.Rate(0.2)
+    rate.sleep()
+
     rospy.loginfo("Requesting service 3")
     fib_srv(3)
     rospy.loginfo("Requesting service 15")

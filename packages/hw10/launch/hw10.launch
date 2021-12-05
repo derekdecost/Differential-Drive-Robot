@@ -1,0 +1,13 @@
+<launch>
+    <!--
+        Launch the action server and service nodes from their package directories.
+    -->
+    <include file="$(find example_action_server)/launch/fibonacci.launch"/>
+    <include file="$(find example_service)/launch/fibonacci.launch"/>
+
+    <!--
+        Launch the client node that will make requests to the action server and service 
+        and performing timing of their operations.
+    -->
+    <node pkg="hw10" name="hw10_client_node" type="hw10_client.py"/>
+</launch>
