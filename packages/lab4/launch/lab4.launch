@@ -1,0 +1,119 @@
+<launch>
+    <!--
+        Controller nodes and parameters.
+    -->
+    <group ns="controllers">
+        <!--
+            Linear velocity controller.
+        -->
+        <group ns="linear_velocity">
+            <!--
+                Linear velocity definictions.
+            -->
+            <group ns="definitions">
+                <group ns="gains">
+                    <param name="Kp" type="double" value="0"/>
+                    <param name="Ki" type="double" value="0"/>
+                    <param name="Kd" type="double" value="0"/>
+                </group>
+
+                <group ns="periods">
+                    <param name="dt" type="double" value="0.1"/>
+                </group>
+            </group>
+
+            <!--
+                Linear velocity topics.
+            -->
+            <group ns="topics">
+                <group ns="inputs">
+                    <param name="start"     type="bool"   value="false"/>
+                    <param name="pid_error" type="string" value="/pid/linear_velocity/error"/>
+                </group>
+
+                <group ns="outputs">
+                    <param name="pid_out" type="string" value="/pid/linear_velocity/out"/>
+                </group>
+            </group>
+
+            <!--
+                Linear velocity nodes.
+            -->
+            <node pkg="lab4" name="linear_velocity_controller_node" type="linear_velocity_controller_node.py"/>
+        </group>
+
+        <!--
+            Angular velocity controller.
+        -->
+        <group ns="angular_velocity">
+            <!--
+                Angular velocity definitions.
+            -->
+            <group ns="definitions">
+                <group ns="gains">
+                    <param name="Kp" type="double" value="0"/>
+                    <param name="Ki" type="double" value="0"/>
+                    <param name="Kd" type="double" value="0"/>
+                </group>
+
+                <group ns="periods">
+                    <param name="dt" type="double" value="0.1"/>
+                </group>
+            </group>
+
+            <!--
+                Angular velocity topics.
+            -->
+            <group ns="topics">
+                <group ns="inputs">
+                    <param name="start"     type="bool"   value="false"/>
+                    <param name="pid_error" type="string" value="/pid/angular_velocity/error"/>
+                </group>
+
+                <group ns="outputs">
+                    <param name="pid_output_topic" type="string" value="/pid/angular_velocity/out"/>
+                </group>
+            </group>
+
+            <!--
+                Angular velocity nodes.
+            -->
+            <node pkg="lab4" name="angular_velocity_controller_node" type="angular_velocity_controller_node.py"/>
+        </group>
+    </group>
+
+    <!--
+        Drivers for sensor and actuator components.
+    -->
+    <group ns="drivers">
+        <!--
+            Driver for the robot wheels.
+        -->
+        <group ns="wheels">
+            <!--
+                Wheel driver definitions.
+            -->
+            <group ns="definitions">
+            </group>
+
+            <!--
+                Wheel driver topics.
+            -->
+            <group ns="topics">
+                <group ns="inputs">
+                    <param name="left_encoder_topic"  type="string" value="/beezchurger/left_wheel_encoder_node/tick"/>
+                    <param name="right_encoder_topic" type="string" value="/beezchurger/right_wheel_encoder_node/tick"/>
+                </group>
+
+                <group ns="outputs">
+                    <param name="wheels_output_topic" type="string" value="/drivers/wheels/wheel_distance_delta"/>
+                </group>
+            </group>
+
+            <!--
+                Wheel driver nodes.
+            -->
+            <node pkg="lab4" name="wheel_driver_node" type="wheel_driver_node.py"/>
+        </group>
+    </group>
+</launch>
