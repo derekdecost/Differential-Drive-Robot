@@ -41,11 +41,20 @@ if __name__ == "__main__":
     rate = rospy.Rate(0.2)
     rate.sleep()
 
+    # ROS Service Calls
     rospy.loginfo("Requesting service 3")
-    fib_srv(3)
+    fib_seq = fib_srv(3)
+    rospy.loginfo(f"Result: {', '.join([str(n) for n in fib_seq.sequence])}")
+    
     rospy.loginfo("Requesting service 15")
-    fib_srv(15)
+    fib_seq = fib_srv(15)
+    rospy.loginfo(f"Result: {', '.join([str(n) for n in fib_seq.sequence])}")
+    
+    # ROS Action Calls
     rospy.loginfo("Requesting action 3")
-    fib_action(3)
+    fib_seq = fib_action(3)
+    rospy.loginfo(f"Result: {', '.join([str(n) for n in fib_seq.sequence])}")
+    
     rospy.loginfo("Requesting action 15")
-    fib_action(15)
+    fib_seq = fib_action(15)
+    rospy.loginfo(f"Result: {', '.join([str(n) for n in fib_seq.sequence])}")
