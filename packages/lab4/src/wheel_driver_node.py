@@ -6,7 +6,7 @@ import numpy as np
 from std_msgs.msg     import Float32
 from lib.wheel_driver import WheelDriver
 
-class DuckiebotDriver(self):
+class DuckiebotDriver:
     def __init__(self):
         self.__linear_xdd  = 0
         self.__linear_xd   = 0

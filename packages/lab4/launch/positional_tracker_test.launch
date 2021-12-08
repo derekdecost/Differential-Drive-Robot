@@ -1,0 +1,45 @@
+<launch>
+    <!--
+        Includes
+    -->
+    <include file="$(find duckietown_demos)/launch/apriltag_detector.launch"/>
+
+    <!--
+        Node ready flags.
+    -->
+    <group ns="flags">
+        <param name="test"                     type="string" value="true" />
+        <param name="positional_tracker_ready" type="string" value="false"/>
+        <param name="angular_controller_ready" type="string" value="false"/>
+        <param name="linear_controller_ready"  type="string" value="false"/>
+        <param name="wheel_driver_ready"       type="string" value="false"/>
+    </group>
+
+    <!--
+        Trackers for the duckiebot.
+    -->
+    <group ns="trackers">
+        <!--
+            Positional tracker for the duckiebot.
+        -->
+        <group ns="position">
+            <!--
+                Positional tracker topics.
+            -->
+            <group ns="topics">
+                <group ns="inputs">
+                    <param name="apriltag_position" type="string" value="/beezchurger/apriltag_detector_node/detections"/>
+                </group>
+                <group ns="outputs">
+                    <param name="v_error"     type="string" value="/pid/linear_velocity/error"/>
+                    <param name="omega_error" type="string" value="/pid/angular_velocity/error"/>
+                </group>
+            </group>
+
+            <!--
+                Positional tracker nodes.
+            -->
+            <node pkg="lab4" name="positional_tracker_node" type="positional_tracker_node.py"/>
+        </group>
+    </group>
+</launch>

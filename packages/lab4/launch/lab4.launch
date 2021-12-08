@@ -1,5 +1,21 @@
 <launch>
     <!--
+        Includes
+    -->
+    <include file="$(find duckietown_demos)/launch/apriltag_detector.launch"/>
+
+    <!--
+        Node ready flags.
+    -->
+    <group ns="flags">
+        <param name="test"                     type="string" value="false" />
+        <param name="positional_tracker_ready" type="string" value="false"/>
+        <param name="angular_controller_ready" type="string" value="false"/>
+        <param name="linear_controller_ready"  type="string" value="false"/>
+        <param name="wheel_driver_ready"       type="string" value="false"/>
+    </group>
+
+    <!--
         Controller nodes and parameters.
     -->
     <group ns="controllers">
@@ -16,10 +32,6 @@
                     <param name="Ki" type="double" value="0"/>
                     <param name="Kd" type="double" value="0"/>
                 </group>
-
-                <group ns="periods">
-                    <param name="dt" type="double" value="0.1"/>
-                </group>
             </group>
 
             <!--
@@ -27,7 +39,6 @@
             -->
             <group ns="topics">
                 <group ns="inputs">
-                    <param name="start"     type="bool"   value="false"/>
                     <param name="pid_error" type="string" value="/pid/linear_velocity/error"/>
                 </group>
 
@@ -55,10 +66,6 @@
                     <param name="Ki" type="double" value="0"/>
                     <param name="Kd" type="double" value="0"/>
                 </group>
-
-                <group ns="periods">
-                    <param name="dt" type="double" value="0.1"/>
-                </group>
             </group>
 
             <!--
@@ -66,12 +73,11 @@
             -->
             <group ns="topics">
                 <group ns="inputs">
-                    <param name="start"     type="bool"   value="false"/>
                     <param name="pid_error" type="string" value="/pid/angular_velocity/error"/>
                 </group>
 
                 <group ns="outputs">
-                    <param name="pid_output_topic" type="string" value="/pid/angular_velocity/out"/>
+                    <param name="pid_out" type="string" value="/pid/angular_velocity/out"/>
                 </group>
             </group>
 
@@ -91,22 +97,12 @@
         -->
         <group ns="wheels">
             <!--
-                Wheel driver definitions.
-            -->
-            <group ns="definitions">
-            </group>
-
-            <!--
                 Wheel driver topics.
             -->
             <group ns="topics">
                 <group ns="inputs">
-                    <param name="left_encoder_topic"  type="string" value="/beezchurger/left_wheel_encoder_node/tick"/>
-                    <param name="right_encoder_topic" type="string" value="/beezchurger/right_wheel_encoder_node/tick"/>
-                </group>
-
-                <group ns="outputs">
-                    <param name="wheels_output_topic" type="string" value="/drivers/wheels/wheel_distance_delta"/>
+                    <param name="v_pid_in"     type="string" value="/pid/linear_velocity/out"/>
+                    <param name="omega_pid_in" type="string" value="/pid/angular_velocity/out"/>
                 </group>
             </group>
 
@@ -116,4 +112,33 @@
             <node pkg="lab4" name="wheel_driver_node" type="wheel_driver_node.py"/>
         </group>
     </group>
+
+    <!--
+        Trackers for the duckiebot.
+    -->
+    <group ns="trackers">
+        <!--
+            Positional tracker for the duckiebot.
+        -->
+        <group ns="position">
+            <!--
+                Positional tracker topics.
+            -->
+            <group ns="topics">
+                <group ns="inputs">
+                    <param name="apriltag_position" type="string" value="/beezchurger/apriltag_detector_node/detections"/>
+                </group>
+                <group ns="outputs">
+                    <param name="v_error"     type="string" value="/pid/linear_velocity/error"/>
+                    <param name="omega_error" type="string" value="/pid/angular_velocity/error"/>
+                </group>
+            </group>
+
+            <!--
+                Positional tracker nodes.
+            -->
+            <node pkg="lab4" name="positional_tracker_node" type="positional_tracker_node.py"/>
+        </group>
+    </group>
+
 </launch>
