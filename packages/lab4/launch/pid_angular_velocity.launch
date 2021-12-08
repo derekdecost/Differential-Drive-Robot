@@ -1,0 +1,48 @@
+<launch>
+    <!--
+        Node ready flags.
+    -->
+    <group ns="flags">
+        <param name="test"                     type="string" value="false"/>
+        <param name="angular_controller_ready" type="string" value="false"/>
+    </group>
+
+    <!--
+        Controller nodes and parameters.
+    -->
+    <group ns="controllers">
+        <!--
+            Angular velocity controller.
+        -->
+        <group ns="angular_velocity">
+            <!--
+                Angular velocity definitions.
+            -->
+            <group ns="definitions">
+                <group ns="gains">
+                    <param name="Kp" type="double" value="0"/>
+                    <param name="Ki" type="double" value="0"/>
+                    <param name="Kd" type="double" value="0"/>
+                </group>
+            </group>
+
+            <!--
+                Angular velocity topics.
+            -->
+            <group ns="topics">
+                <group ns="inputs">
+                    <param name="pid_error" type="string" value="/pid/angular_velocity/error"/>
+                </group>
+
+                <group ns="outputs">
+                    <param name="pid_out" type="string" value="/pid/angular_velocity/out"/>
+                </group>
+            </group>
+
+            <!--
+                Angular velocity nodes.
+            -->
+            <node pkg="lab4" name="angular_velocity_controller_node" type="angular_velocity_controller_node.py"/>
+        </group>
+    </group>
+</launch>

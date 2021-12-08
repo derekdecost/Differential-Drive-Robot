@@ -1,0 +1,47 @@
+<launch>
+    <!--
+        Node ready flags.
+    -->
+    <group ns="flags">
+        <param name="test"                     type="string" value="false"/>
+        <param name="linear_controller_ready"  type="string" value="false"/>
+    </group>
+
+    <!--
+        Controller nodes and parameters.
+    -->
+    <group ns="controllers">
+        <!--
+            Linear velocity controller.
+        -->
+        <group ns="linear_velocity">
+            <!--
+                Linear velocity definictions.
+            -->
+            <group ns="definitions">
+                <group ns="gains">
+                    <param name="Kp" type="double" value="0"/>
+                    <param name="Ki" type="double" value="0"/>
+                    <param name="Kd" type="double" value="0"/>
+                </group>
+            </group>
+
+            <!--
+                Linear velocity topics.
+            -->
+            <group ns="topics">
+                <group ns="inputs">
+                    <param name="pid_error" type="string" value="/pid/linear_velocity/error"/>
+                </group>
+
+                <group ns="outputs">
+                    <param name="pid_out" type="string" value="/pid/linear_velocity/out"/>
+                </group>
+            </group>
+
+            <!--
+                Linear velocity nodes.
+            -->
+            <node pkg="lab4" name="linear_velocity_controller_node" type="linear_velocity_controller_node.py"/>
+        </group>
+</launch>

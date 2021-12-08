@@ -8,11 +8,8 @@
         Node ready flags.
     -->
     <group ns="flags">
-        <param name="test"                     type="string" value="true" />
+        <param name="test"                     type="string" value="false"/>
         <param name="positional_tracker_ready" type="string" value="false"/>
-        <param name="angular_controller_ready" type="string" value="false"/>
-        <param name="linear_controller_ready"  type="string" value="false"/>
-        <param name="wheel_driver_ready"       type="string" value="false"/>
     </group>
 
     <!--

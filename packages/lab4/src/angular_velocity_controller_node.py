@@ -45,7 +45,9 @@ if __name__ == "__main__":
 
         # Create the PID controller using the launch file parameters.
         pid_controller = Controller(Kp, Ki, Kd, dt, input_topic, output_topic)
-
+        
+        #TODO: Set angular PID to ready
+        #TODO: Check for wheel driver to be ready.
         while not rospy.is_shutdown():
             if rospy.has_param("topics/inputs/start"):
                 if rospy.get_param("topics/inputs/start") == True:
