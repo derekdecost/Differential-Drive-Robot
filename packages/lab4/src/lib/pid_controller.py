@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import rospy
+
+
 class PIDController:
     """
     """
@@ -7,6 +10,8 @@ class PIDController:
         self.__kp              = kp        # Proportional weight.
         self.__ki              = ki        # Integral weight.
         self.__kd              = kd        # Differential weight.
+        self.__t_prev          = None
+        self.__t               = None
         self.__dt              = dt        # Time interval.
         self.__error_prev      = None      # Previous calculated error.
         self.__error_integrate = 0         # Controller error.
@@ -22,10 +27,18 @@ class PIDController:
         error                   = err
         self.__error_integrate += error
 
+        # Calculate the time interval
+        if self.__t_prev is None:
+            self.__t_prev = rospy.get_time()
+        self.__t = rospy.get_time()
+        dt       = self.__t - self.__t_prev
+
+        # Calculate the differential error
         if self.__error_prev is None:
             error_differential = 0.0
         else:
-            error_differential = (error - self.__error_prev) / self.__dt
+            error_differential = (error - self.__error_prev) / dt
+            self.__t_prev = self.__t
 
         self.__error_prev = error
 

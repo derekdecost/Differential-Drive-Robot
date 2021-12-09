@@ -6,4 +6,26 @@
     <include file="$(find lab4)/launch/pid_angular_velocity.launch"/>
     <include file="$(find lab4)/launch/pid_linear_velocity.launch"/>
     <include file="$(find lab4)/launch/wheel_driver.launch"/>
+
+    <!--
+        Lab 4 Outline
+
+        Positional Tracker ==> PID Controllers ==> Wheel Driver
+
+        (1) Positional Tracker:
+            Looks for april tags in the robots camera (speicifically tag 96 in this lab) and calculates 
+            the error between the robot's position with respect to the tag and the goal position of 
+            10cm from the tag and facing the tag.
+
+            The error value(s) is sent to the PID controller to calculate the control value.
+
+        (2) PID Controllers:
+            Uses the error value provided by the position tracker to calculate the acceleration of the 
+            robot. The PID controller sends this acceleration to the Wheel Driver node to control the 
+            robot's motion.
+
+        (3) Wheel Driver:
+            Based on the PID controller acceleration, calculates the linear and angular velocity of the 
+            robot and sends these values to the duckiebot wheel drivers.
+    -->
 </launch>

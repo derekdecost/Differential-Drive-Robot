@@ -33,7 +33,7 @@ class PositionalTracker:
 
         # Find the april tag associated with the selected sign.
         for apriltag in detections:
-            if apriltag.tag_id == 37:
+            if apriltag.tag_id == 96:
                 # Calculate errors for linear and angular velocity and publish.
                 v_error     = apriltag.transform.translation.z - self.__z_goal
                 omega_error = self.__x_goal - apriltag.transform.translation.x
@@ -46,50 +46,54 @@ class PositionalTracker:
         return
 
 if __name__ == "__main__":
-    rospy.init_node("positional_tracker_node", anonymous=True)
-    rate = rospy.Rate(1)
+    try:
+        rospy.init_node("positional_tracker_node", anonymous=True)
+        rate = rospy.Rate(1)
 
-    # Set the positional tracker node to ready
-    while not rospy.is_shutdown():
-        if rospy.has_param("/flags/positional_tracker_ready"):
-            if rospy.get_param("/flags/positional_tracker_ready") == "false":
-                rospy.logwarn("positional_tracker_node: Setting 'positional_tracker_ready' to 'true'.")
-                rospy.set_param("/flags/positional_tracker_ready", "true")
-                break
-        else:
-            rospy.logwarn("positional_tracker_node: Parameter '/flags/positional_tracker_ready' does not exist!")
-            exit()
-        rate.sleep()
+        # Set the positional tracker node to ready
+        while not rospy.is_shutdown():
+            if rospy.has_param("/flags/positional_tracker_ready"):
+                if rospy.get_param("/flags/positional_tracker_ready") == "false":
+                    rospy.logwarn("positional_tracker_node: Positional tracker started!")
+                    rospy.set_param("/flags/positional_tracker_ready", "true")
+                    break
+            else:
+                rospy.logwarn("positional_tracker_node: Parameter '/flags/positional_tracker_ready' does not exist!")
+                exit()
+            rate.sleep()
 
-    # Check if the test flag is set, if not, check for the readiness of other nodes.
-    if rospy.has_param("/flags/test"):
-        if rospy.get_param("/flags/test") == "false":
-            # Wait until param says angular controller is ready
-            while not rospy.is_shutdown():
-                if rospy.has_param("/flags/angular_controller_ready"):
-                    if rospy.get_param("/flags/angular_controller_ready") == "true":
-                        break
-                rospy.logwarn("Waiting for /flags/angular_controller_ready to be true")
-                rate.sleep()
+        # Check if the test flag is set, if not, check for the readiness of other nodes.
+        if rospy.has_param("/flags/test"):
+            if rospy.get_param("/flags/test") == "false":
+                # Wait until param says angular controller is ready
+                while not rospy.is_shutdown():
+                    if rospy.has_param("/flags/angular_controller_ready"):
+                        if rospy.get_param("/flags/angular_controller_ready") == "true":
+                            break
+                    rospy.logwarn("Waiting for /flags/angular_controller_ready to be true")
+                    rate.sleep()
 
-            # Wait until param says linear controller is ready
-            while not rospy.is_shutdown():
-                if rospy.has_param("/flags/linear_controller_ready"):
-                    if rospy.get_param("/flags/linear_controller_ready") == "true":
-                        break
-                rospy.logwarn("Waiting for /flags/linear_controller_ready to be true")
-                rate.sleep()
+                # Wait until param says linear controller is ready
+                while not rospy.is_shutdown():
+                    if rospy.has_param("/flags/linear_controller_ready"):
+                        if rospy.get_param("/flags/linear_controller_ready") == "true":
+                            break
+                    rospy.logwarn("Waiting for /flags/linear_controller_ready to be true")
+                    rate.sleep()
 
-            # Wait until param says wheel driver is ready
-            while not rospy.is_shutdown():
-                if rospy.has_param("/flags/wheel_driver_ready"):
-                    if rospy.get_param("/flags/wheel_driver_ready") == "true":
-                        break
-                rospy.logwarn("Waiting for /flags/wheel_driver_ready to be true")
-                rate.sleep()
+                # Wait until param says wheel driver is ready
+                while not rospy.is_shutdown():
+                    if rospy.has_param("/flags/wheel_driver_ready"):
+                        if rospy.get_param("/flags/wheel_driver_ready") == "true":
+                            break
+                    rospy.logwarn("Waiting for /flags/wheel_driver_ready to be true")
+                    rate.sleep()
+        
+        # Start the posiitional tracker once all nodes have been started.
+        positional_tracker = PositionalTracker()
+
+        while not rospy.is_shutdown():
+            pass
     
-    # Start the posiitional tracker once all nodes have been started.
-    positional_tracker = PositionalTracker()
-
-    while not rospy.is_shutdown():
+    except rospy.ROSInterruptException:
         pass
