@@ -6,19 +6,15 @@ from lib.pid_controller import PIDController
 from std_msgs.msg       import Float32
 
 class Controller:
-    def __init__(self, Kp, Ki, Kd, dt, input_topic, output_topic):
-        self.run   = False
-        self.__PID = PIDController(Kp, Ki, Kd, dt)
+    def __init__(self, Kp, Ki, Kd, input_topic, output_topic):
+        self.__PID = PIDController(Kp, Ki, Kd)
         self.__pub = rospy.Publisher(output_topic, Float32, queue_size=10)
         rospy.Subscriber(input_topic, Float32, self.__cb_step)
 
     def __cb_step(self, msg):
-        if self.run == False:
-            return
-            
         error = msg.data
         self.__PID.step(error)
-        self.__pub.publish(Float32(data=self.__PID.output_sum))
+        self.__pub.publish(Float32(data=(self.__PID.output_sum * self.__PID.dt_latest)))
 
 if __name__ == "__main__":
     try:
@@ -43,9 +39,6 @@ if __name__ == "__main__":
 
         if rospy.has_param("topics/outputs/pid_out"):
             output_topic = rospy.get_param("topics/outputs/pid_out")
-
-        # Create the PID controller using the launch file parameters.
-        pid_controller = Controller(Kp, Ki, Kd, dt, input_topic, output_topic)
 
         # Set the linear velocity controller to ready.
         while not rospy.is_shutdown():
@@ -87,7 +80,7 @@ if __name__ == "__main__":
                     rate.sleep()
 
         # Create the PID controller using the launch file parameters.
-        pid_controller = Controller(Kp, Ki, Kd, dt, input_topic, output_topic)
+        pid_controller = Controller(Kp, Ki, Kd, input_topic, output_topic)
         
         while not rospy.is_shutdown():
             pass

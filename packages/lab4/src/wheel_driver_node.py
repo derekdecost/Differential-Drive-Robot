@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
 
-from numpy.core.arrayprint import dtype_is_implied
 import rospy
 import numpy as np
 
-from std_msgs.msg     import Float32
-from lib.wheel_driver import WheelDriver
+from std_msgs.msg        import Float32
+from lib.wheel_driver    import WheelDriver
+from duckietown_msgs.msg import FSMState
 
 class DuckiebotDriver:
     def __init__(self):
+        self.__linear_control  = 0
+        self.__angular_control = 0
+        self.__wd              = WheelDriver()
+
+        # Topics used to set the state to drive programatically.
+        rospy.Subscriber("/beezchurger/fsm_node/mode", FSMState, self.__cb_duckiebot_fsm)
+        self.fsm_pub = rospy.Publisher("/beezchurger/fsm_node/mode", FSMState, queue_size=1)
+
         if rospy.has_param("topics/inputs/v_pid_in"):
             rospy.Subscriber(rospy.get_param("topics/inputs/v_pid_in"), Float32, self.__cb_update_linear_control)
         else:
@@ -19,51 +27,19 @@ class DuckiebotDriver:
         else:
             rospy.logwarn("wheel_driver_node: Parameter 'topics/inputs/omega_pid_in' does not exist!")
 
-        self.__t_prev = None
-        self.__t      = None
-
-        self.__v      = 0
-        self.__omega  = 0
-        self.__linear_control  = 0
-        self.__angular_control = 0
-        self.__iterating = False
-        self.__wd = WheelDriver()
-        rospy
-
-    def iterate(self):
-        if (self.__t_prev is None) and (self.__t is None):
-            self.__t_prev = rospy.get_time()
-
-        try:
-            self.__t      = rospy.get_time()
-            dt            = self.__t - self.__t_prev
-            self.__t_prev = self.__t
-
-            self.__v     += self.__linear_control  * dt
-            self.__omega += self.__angular_control * dt
-            self.__wd.drive(self.__v, self.__omega)
-        except:
-            pass
-
+    def publish_state(self, state):
+        self.duckiebot_fsmstate.state = state
+        self.fsm_pub.publish(self.duckiebot_fsmstate)
         return
-
-    #TODO: If there are strang patterns in running, it could result from here.
+        
     def __cb_update_angular_control(self, msg):
         self.__angular_control = msg.data
-        while(self.__iterating):
-            pass
-        self.__iterating = True
-        self.iterate()
-        self.__iterating = False
+        self.__wd.drive(self.__linear_control, self.__angular_control)
         return
 
     def __cb_update_linear_control(self, msg):
         self.__linear_control = msg.data
-        while(self.__iterating):
-            pass
-        self.__iterating = True
-        self.iterate()
-        self.__iterating = False
+        self.__wd.drive(self.__linear_control, self.__angular_control)
         return
 
 if __name__ == "__main__":

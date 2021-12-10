@@ -44,4 +44,5 @@
             -->
             <node pkg="lab4" name="linear_velocity_controller_node" type="linear_velocity_controller_node.py"/>
         </group>
+    </group>
 </launch>
