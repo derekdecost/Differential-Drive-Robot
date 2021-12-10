@@ -22,7 +22,7 @@ class PIDController:
     @fn     step
     @brief  
     """
-    def step(self, err):
+    def step(self, err, kp=None, ki=None, kd=None):
         # Calculate the errors of the controller.
         error                   = err
         self.__error_integrate += error
@@ -44,10 +44,22 @@ class PIDController:
 
         self.__error_prev = error
 
-        # Controller components.
-        proportional = self.__kp * error
-        integral     = self.__ki * self.__error_integrate
-        differential = self.__kd * error_differential
+        # Controller components. 
+        # In the case that the gain arguments are being used, use the pass gain values.
+        if kp is None:
+            proportional = self.__kp * error
+        else:
+            proportional = kp * error
+
+        if ki is None:
+            integral = self.__ki * self.__error_integrate
+        else:
+            integral = ki * self.__error_integrate
+        
+        if kd is None:
+            differential = self.__kd * error_differential
+        else:
+            differential = kd * error_differential
 
         # Assign and calculate outputs for the controller.
         self.output_list  = [proportional, integral, differential]

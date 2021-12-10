@@ -13,7 +13,13 @@ class Controller:
 
     def __cb_step(self, msg):
         error = msg.data
-        self.__PID.step(error)
+
+        # Allow for PID gains to be set using the command line while the controller is running.
+        self.__PID.step(error, \
+                        kp=rospy.get_param("definitions/gains/Kp"), \
+                        ki=rospy.get_param("definitions/gains/Ki"), \
+                        kd=rospy.get_param("definitions/gains/Kd"))
+        #TODO: May need to delete the dt_latest multiplication and just pass the output.
         self.__pub.publish(Float32(data=(self.__PID.output_sum * self.__PID.dt_latest)))
 
 if __name__ == "__main__":
