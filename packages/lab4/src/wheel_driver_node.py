@@ -9,16 +9,21 @@ from duckietown_msgs.msg import FSMState
 
 class DuckiebotDriver:
     def __init__(self):
-        self.__linear_control   = 0
-        self.__angular_control  = 0
-        self.__wd                = WheelDriver()
-        self.duckiebot_fsm_state = FSMState()
+        self.__linear_control  = 0
+        self.__angular_control = 0
+        self.__wd              = WheelDriver()
+
+        self.duckiebot_fsm_state                    = FSMState()
+        self.duckiebot_fsm_state.header.seq         = 0
+        self.duckiebot_fsm_state.header.stamp.secs  = 0
+        self.duckiebot_fsm_state.header.stamp.nsecs = 0
+        self.duckiebot_fsm_state.header.frame_id    = ""
         self.duckiebot_fsm_state.state = self.duckiebot_fsm_state.LANE_FOLLOWING
         self.duckiebot_current_state   = self.duckiebot_fsm_state.NORMAL_JOYSTICK_CONTROL
 
         # Topics used to set the state to drive programatically.
         rospy.Subscriber("/beezchurger/fsm_node/mode", FSMState, self.__cb_duckiebot_fsm)
-        self.fsm_pub = rospy.Publisher("/beezchurger/fsm_node/mode", FSMState, queue_size=1)
+        self.fsm_pub = rospy.Publisher("/beezchurger/fsm_node/mode", FSMState, queue_size=10)
 
         if rospy.has_param("topics/inputs/v_pid_in"):
             rospy.Subscriber(rospy.get_param("topics/inputs/v_pid_in"), Float32, self.__cb_update_linear_control)
@@ -36,6 +41,10 @@ class DuckiebotDriver:
         self.fsm_pub.publish(self.duckiebot_fsm_state)
         return
         
+    def stop(self):
+        self.__wd.drive(0, 0)
+        return
+
     def __cb_duckiebot_fsm(self, msg):
         # Records the new FSM state when the state changes.
         self.duckiebot_current_state = msg.state
@@ -56,13 +65,14 @@ class DuckiebotDriver:
 if __name__ == "__main__":
     try:
         rospy.init_node("wheel_driver_node", anonymous=True)
+        
         rate = rospy.Rate(1)
 
         # Set the linear velocity controller to ready.
         while not rospy.is_shutdown():
             if rospy.has_param("/flags/wheel_driver_ready"):
                 if rospy.get_param("/flags/wheel_driver_ready") == "false":
-                    rospy.logdebug("wheel_driver_node: Linear velocity PID controller started!")
+                    rospy.logdebug("wheel_driver_node: Wheel driver started!")
                     rospy.set_param("/flags/wheel_driver_ready", "true")
                     break
             else:
@@ -91,6 +101,7 @@ if __name__ == "__main__":
                             break
                     else:
                         rospy.logwarn("wheel_driver_node: Parameter '/flags/angular_controller_ready' does not exist!")
+                    
                     rospy.logdebug("Waiting for /flags/angular_controller_ready to be true")
                     rate.sleep()
 
@@ -109,13 +120,16 @@ if __name__ == "__main__":
 
         # Create the WheelDriver using the launch file parameters.
         duckiebot_driver = DuckiebotDriver()
+        rospy.on_shutdown(duckiebot_driver.stop())
 
         # Set the duckiebot into LANE_FOLLOWING mode to allow for an external node to control the robot wheels.
         while duckiebot_driver.duckiebot_current_state != duckiebot_driver.duckiebot_fsm_state.LANE_FOLLOWING:
             # Publish the lane following state every second until it changes.
             duckiebot_driver.publish_state(duckiebot_driver.duckiebot_fsm_state.LANE_FOLLOWING)
+            rospy.logwarn("Setting FSM to LANE_FOLLOWING...")
             rate.sleep()
-        rospy.logdebug("wheel_driver_node: Duckiebot FSM state set to LANE_FOLLOWING mode.")
+
+        rospy.logwarn("wheel_driver_node: Duckiebot FSM state set to LANE_FOLLOWING mode.")
 
         while not rospy.is_shutdown():
             pass

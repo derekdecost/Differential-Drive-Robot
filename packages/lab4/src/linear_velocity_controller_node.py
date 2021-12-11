@@ -20,8 +20,8 @@ class Controller:
                         ki=rospy.get_param("definitions/gains/Ki"), \
                         kd=rospy.get_param("definitions/gains/Kd"))
         #TODO: May need to delete the dt_latest multiplication and just pass the output.
-        self.__pub.publish(Float32(data=(self.__PID.output_sum * self.__PID.dt_latest)))
-        # self.__pub.publish(Float32(data=self.__PID.output_sum))
+        # self.__pub.publish(Float32(data=(self.__PID.output_sum * self.__PID.dt_latest)))
+        self.__pub.publish(Float32(data=self.__PID.output_sum))
 
 if __name__ == "__main__":
     try:

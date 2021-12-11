@@ -1,5 +1,13 @@
 <launch>
     <!--
+        Includes
+    -->
+    <include file="$(find fsm)/launch/fsm_node.launch">
+        <arg name="veh" value="$(env VEHICLE_NAME)"/>
+        <arg name="param_file_name" value="lane_following"/>
+    </include>
+    
+    <!--
         Node ready flags.
     -->
     <group ns="flags">
