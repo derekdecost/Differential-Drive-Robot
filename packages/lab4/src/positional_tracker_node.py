@@ -37,8 +37,6 @@ class PositionalTracker:
                 # Calculate errors for linear and angular velocity and publish.
                 v_error     = apriltag.transform.translation.z - self.__z_goal
                 omega_error = self.__x_goal - apriltag.transform.translation.x
-
-                # TODO: Implement an error tolerance if needed. ie if error is within 10% of goal, treat as 0 error.
                 
                 self.__v_error_pub.publish(Float32(data=v_error))
                 self.__omega_error_pub.publish(Float32(data=omega_error))

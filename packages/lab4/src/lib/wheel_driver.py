@@ -21,7 +21,7 @@ class WheelDriver:
         @return Returns a WheelDriver object.
     """
     def __init__(self, pause_rate=0.5):
-        self.wheel_twist_pub = rospy.Publisher(WHEEL_CMD_TOPIC, WHEEL_CMD_TYPE, queue_size=10)
+        self.wheel_twist_pub = rospy.Publisher(WHEEL_CMD_TOPIC, WHEEL_CMD_TYPE, queue_size=1)
 
         self.wheel_twist       = Twist2DStamped()
         self.wheel_twist.header.seq         = 0
