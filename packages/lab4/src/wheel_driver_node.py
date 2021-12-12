@@ -22,6 +22,7 @@ class DuckiebotDriver:
         self.duckiebot_current_state   = self.duckiebot_fsm_state.NORMAL_JOYSTICK_CONTROL
 
         # Topics used to set the state to drive programatically.
+        rospy.Subscriber("/emergency_stop", Float32, self.__cb_emergency_stop)
         rospy.Subscriber("/beezchurger/fsm_node/mode", FSMState, self.__cb_duckiebot_fsm)
         self.fsm_pub = rospy.Publisher("/beezchurger/fsm_node/mode", FSMState, queue_size=1)
 
@@ -45,6 +46,11 @@ class DuckiebotDriver:
         self.__wd.drive(0, 0)
         return
 
+    def __cb_emergency_stop(self, msg):
+        if msg.data == 1:
+            self.__wd.drive(0, 0)
+        return
+
     def __cb_duckiebot_fsm(self, msg):
         # Records the new FSM state when the state changes.
         self.duckiebot_current_state = msg.state
@@ -59,6 +65,17 @@ class DuckiebotDriver:
     def __cb_update_linear_control(self, msg):
         # Saves the new value for the linear control and sets the wheel speeds.
         self.__linear_control = msg.data
+
+        # Limit the maximum linear speed of the robot.
+        if self.__linear_control > 0.3:
+            self.__linear_control = 0.3
+        elif self.__linear_control < -0.3:
+            self.__linear_control = -0.3
+
+        # Limit the minimum linear speed such that any values lower than the threshold are treated as zero (0).
+        if self.__linear_control < 0.048 and self.__linear_control > -0.048:
+            self.__linear_control = 0
+
         self.__wd.drive(self.__linear_control, self.__angular_control)
         return
 

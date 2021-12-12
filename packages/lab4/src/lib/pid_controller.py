@@ -64,3 +64,11 @@ class PIDController:
         # Assign and calculate outputs for the controller.
         self.output_list  = [proportional, integral, differential]
         self.output_sum   = sum(self.output_list)
+
+    def reset(self):
+        self.__t_prev          = None
+        self.__t               = None    
+        self.dt_latest         = None  
+        self.__error_prev      = None      
+        self.__error_integrate = 0         
+        return

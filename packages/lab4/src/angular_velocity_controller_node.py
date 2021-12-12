@@ -7,11 +7,25 @@ from std_msgs.msg       import Float32
 
 class Controller:
     def __init__(self, Kp, Ki, Kd, input_topic, output_topic):
+        self.__stopped = False
         self.__PID = PIDController(Kp, Ki, Kd)
         self.__pub = rospy.Publisher(output_topic, Float32, queue_size=1)
+        
+        rospy.Subscriber("/emergency_stop", Float32, self.__cb_emergency_stop)
         rospy.Subscriber(input_topic, Float32, self.__cb_step)
 
-    def __cb_step(self, msg):           
+    def __cb_emergency_stop(self, msg):
+        if msg.data == 1:
+            self.__stopped = True
+        else:
+            self.__stopped = False
+        return
+        
+    def __cb_step(self, msg):    
+        if self.__stopped == True:
+            self.__PID.reset()
+            return
+
         error = msg.data
         # self.__PID.step(error, \
         #                 kp=rospy.get_param("definitions/gains/Kp"), \
@@ -21,6 +35,7 @@ class Controller:
         #TODO: May need to delete the dt_latest multiplication and just pass the output.
         # self.__pub.publish(Float32(data=(self.__PID.output_sum * self.__PID.dt_latest)))
         self.__pub.publish(Float32(data=self.__PID.output_sum * 10))
+        return
 
 if __name__ == "__main__":
     try:

@@ -9,14 +9,15 @@ from duckietown_msgs.msg import AprilTagDetectionArray
 V_THRESHOLD_H = -0.01
 V_THRESHOLD_L =  0.01
 
-OMEGA_THRESHOLD_H =  0.01
-OMEGA_THRESHOLD_L = -0.01
+OMEGA_THRESHOLD_H =  0.008
+OMEGA_THRESHOLD_L = -0.008
 
 class PositionalTracker:
     def __init__(self):
         self.__x_goal =  0.0    # Goal to make robot face tag head on.
         self.__z_goal =  0.1    # Goal to get robot 10cm from tag.
 
+        self.__emergency_stop = rospy.Publisher("/emergency_stop", Float32, queue_size=1)
         if rospy.has_param("topics/inputs/apriltag_position"):
             rospy.Subscriber(rospy.get_param("topics/inputs/apriltag_position"), AprilTagDetectionArray, self.__cb_apriltag_position, queue_size=1)
 
@@ -35,7 +36,10 @@ class PositionalTracker:
         if len(detections) == 0:
             self.__v_error_pub.publish(Float32(data=0))
             self.__omega_error_pub.publish(Float32(data=0))
+            self.__emergency_stop.publish(Float32(data=1))
             return
+        else:
+            self.__emergency_stop.publish(Float32(data=0))
 
         # Find the april tag associated with the selected sign.
         for apriltag in detections:
@@ -52,6 +56,13 @@ class PositionalTracker:
                 if omega_error > OMEGA_THRESHOLD_L and omega_error < OMEGA_THRESHOLD_H:
                     omega_error = 0
                 
+                # In the case where both errors are zero (0), stop the robot and don't publish the error values.
+                if v_error == 0 and omega_error == 0:
+                    self.__emergency_stop.publish(Float32(data=1))
+                    return
+                else:
+                    self.__emergency_stop.publish(Float32(data=0))
+
                 # Publish the error values.
                 self.__v_error_pub.publish(Float32(data=v_error))
                 self.__omega_error_pub.publish(Float32(data=omega_error))
