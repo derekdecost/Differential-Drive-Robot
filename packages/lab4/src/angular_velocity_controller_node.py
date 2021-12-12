@@ -8,18 +8,19 @@ from std_msgs.msg       import Float32
 class Controller:
     def __init__(self, Kp, Ki, Kd, input_topic, output_topic):
         self.__PID = PIDController(Kp, Ki, Kd)
-        self.__pub = rospy.Publisher(output_topic, Float32, queue_size=10)
+        self.__pub = rospy.Publisher(output_topic, Float32, queue_size=1)
         rospy.Subscriber(input_topic, Float32, self.__cb_step)
 
     def __cb_step(self, msg):           
         error = msg.data
-        self.__PID.step(error, \
-                        kp=rospy.get_param("definitions/gains/Kp"), \
-                        ki=rospy.get_param("definitions/gains/Ki"), \
-                        kd=rospy.get_param("definitions/gains/Kd"))
+        # self.__PID.step(error, \
+        #                 kp=rospy.get_param("definitions/gains/Kp"), \
+        #                 ki=rospy.get_param("definitions/gains/Ki"), \
+        #                 kd=rospy.get_param("definitions/gains/Kd"))
+        self.__PID.step(error)
         #TODO: May need to delete the dt_latest multiplication and just pass the output.
         # self.__pub.publish(Float32(data=(self.__PID.output_sum * self.__PID.dt_latest)))
-        self.__pub.publish(Float32(data=self.__PID.output_sum))
+        self.__pub.publish(Float32(data=self.__PID.output_sum * 10))
 
 if __name__ == "__main__":
     try:

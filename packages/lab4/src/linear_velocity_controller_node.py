@@ -8,7 +8,7 @@ from std_msgs.msg       import Float32
 class Controller:
     def __init__(self, Kp, Ki, Kd, input_topic, output_topic):
         self.__PID = PIDController(Kp, Ki, Kd)
-        self.__pub = rospy.Publisher(output_topic, Float32, queue_size=10)
+        self.__pub = rospy.Publisher(output_topic, Float32, queue_size=1)
         rospy.Subscriber(input_topic, Float32, self.__cb_step)
 
     def __cb_step(self, msg):
