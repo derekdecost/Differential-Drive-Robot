@@ -6,6 +6,12 @@ import numpy as np
 from std_msgs.msg        import Float32
 from duckietown_msgs.msg import AprilTagDetectionArray
 
+V_THRESHOLD_H = -0.01
+V_THRESHOLD_L =  0.01
+
+OMEGA_THRESHOLD_H =  0.01
+OMEGA_THRESHOLD_L = -0.01
+
 class PositionalTracker:
     def __init__(self):
         self.__x_goal =  0.0    # Goal to make robot face tag head on.
@@ -27,19 +33,26 @@ class PositionalTracker:
 
         # If there are no detected april tags are found, stop the robot.
         if len(detections) == 0:
-            self.__v_error_pub.publish(Float32(data=v_error))
-            self.__omega_error_pub.publish(Float32(data=omega_error))
+            self.__v_error_pub.publish(Float32(data=0))
+            self.__omega_error_pub.publish(Float32(data=0))
             return
 
         # Find the april tag associated with the selected sign.
         for apriltag in detections:
+            # Skip all april tags that do not have the specified id_tag value.
             if apriltag.tag_id == 96:
                 # Calculate errors for linear and angular velocity and publish.
+                # If the calculated error is within a certain threshold, then the 
+                # error will be treated as zero (0).
                 v_error     = apriltag.transform.translation.z - self.__z_goal
-                omega_error = self.__x_goal - apriltag.transform.translation.x
+                if v_error > V_THRESHOLD_L and v_error < V_THRESHOLD_H:
+                    v_error = 0
 
-                # TODO: Implement an error tolerance if needed. ie if error is within 10% of goal, treat as 0 error.
+                omega_error = self.__x_goal - apriltag.transform.translation.x
+                if omega_error > OMEGA_THRESHOLD_L and omega_error < OMEGA_THRESHOLD_H:
+                    omega_error = 0
                 
+                # Publish the error values.
                 self.__v_error_pub.publish(Float32(data=v_error))
                 self.__omega_error_pub.publish(Float32(data=omega_error))
                 break
